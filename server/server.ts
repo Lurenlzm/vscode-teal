@@ -39,6 +39,8 @@ const util = require("util");
 const write = util.promisify(require("fs").write);
 const { spawn } = require('child_process');
 
+import {Definition} from 'vscode-languageserver-types';
+
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection = createConnection(ProposedFeatures.all);
@@ -72,7 +74,13 @@ connection.onInitialize((params: InitializeParams) => {
 			// Tell the client that the server DOES NOT support code completion
 			completionProvider: {
 				resolveProvider: false
-			}
+			},
+
+			//Analysis of symbols
+			documentSymbolProvider: true,
+			workspaceSymbolProvider: true,
+			//Analysis of definition. The server provides goto definition support.
+			definitionProvider: true,
 		}
 	};
 });
@@ -294,6 +302,12 @@ connection.onCompletion(
 		// TODO
 		return [
 		];
+	}
+);
+
+connection.onDefinition(
+	(handler: TextDocumentPositionParams): Definition => {
+		
 	}
 );
 
